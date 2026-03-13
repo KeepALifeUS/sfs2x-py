@@ -5,10 +5,18 @@
 [![Python](https://img.shields.io/pypi/pyversions/sfs2x-py.svg)](https://pypi.org/project/sfs2x-py/)
 [![Downloads](https://img.shields.io/pypi/dm/sfs2x-py.svg)](https://pypi.org/project/sfs2x-py/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/KeepALifeUS/sfs2x-py?style=social)](https://github.com/KeepALifeUS/sfs2x-py)
 
 **Pure Python implementation of the SmartFoxServer 2X binary protocol.**
 
 Encode, decode, and manipulate SFS2X packets with full type fidelity — built for protocol analysis, MITM proxying, and game bot development.
+
+## Why sfs2x-py?
+
+- **No official Python SDK** — SmartFoxServer only provides Java/C#/C++/JS clients
+- **Wire format undocumented** — Binary protocol fully reverse-engineered from scratch
+- **Type-preserving decode** — Critical for MITM proxying (re-encode without data loss)
+- **Pure Python** — Minimal dependencies, easy to integrate
 
 ## What is SmartFoxServer 2X?
 
@@ -255,6 +263,17 @@ The `examples/` directory includes:
 
 - **`decode_packet.py`** — Demonstrates encoding and decoding sample packets
 - **`mitm_proxy.py`** — Transparent TCP proxy that logs all SFS2X commands bidirectionally
+
+## FAQ
+
+**Q: Do I need the official SFS2X SDK?**
+No. sfs2x-py is a fully independent implementation built from reverse engineering.
+
+**Q: Which SFS2X versions are supported?**
+SFS2X 2.x protocol. Tested against servers running SFS 2.13+.
+
+**Q: Can I use this for game modding/botting?**
+This library is for protocol analysis, security research, and educational purposes. Always comply with game Terms of Service.
 
 ## Contributing
 
