@@ -1,6 +1,6 @@
 """sfs2x — Pure Python implementation of the SmartFoxServer 2X binary protocol."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .objects import (
     SFSCodec, TypedValue,

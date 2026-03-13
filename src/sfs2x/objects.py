@@ -428,6 +428,10 @@ class SFSCodec:
         elif type_id == SFS_ARRAY:
             inner = SFSCodec._encode_array(value)
             buf.extend(inner[1:])  # skip the type byte
+        elif type_id == BOOL_ARRAY:
+            buf.extend(struct.pack(">H", len(value)))
+            for v in value:
+                buf.append(1 if v else 0)
         elif type_id == SHORT_ARRAY:
             buf.extend(struct.pack(">H", len(value)))
             for v in value:
@@ -440,6 +444,14 @@ class SFSCodec:
             buf.extend(struct.pack(">H", len(value)))
             for v in value:
                 buf.extend(struct.pack(">q", v))
+        elif type_id == FLOAT_ARRAY:
+            buf.extend(struct.pack(">H", len(value)))
+            for v in value:
+                buf.extend(struct.pack(">f", v))
+        elif type_id == DOUBLE_ARRAY:
+            buf.extend(struct.pack(">H", len(value)))
+            for v in value:
+                buf.extend(struct.pack(">d", v))
         elif type_id == UTF_STRING_ARRAY:
             buf.extend(struct.pack(">H", len(value)))
             for v in value:

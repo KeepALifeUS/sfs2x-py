@@ -1,9 +1,8 @@
 """Tests for SFS2X packet framing, XOR obfuscation, and compression."""
 
 import struct
-import zlib
 import pytest
-from sfs2x.objects import SFSCodec, TypedValue, BYTE, SHORT, INT, LONG
+from sfs2x.objects import TypedValue, BYTE, SHORT, INT
 from sfs2x.protocol import (
     obfuscate_c2s, deobfuscate_c2s,
     encode_c2s_packet, decode_c2s_packet, decode_c2s_packet_typed,
@@ -146,7 +145,7 @@ class TestPacketBuilders:
         assert decoded["c"] == CTRL_EXTENSION
         assert decoded["a"] == ACTION_EXTENSION
         assert decoded["p"]["c"] == "my.command"
-        assert decoded["p"]["r"] == -1 or decoded["p"]["r"] == 5  # room_id
+        assert decoded["p"]["r"] == 5
         assert decoded["p"]["p"]["key"] == "value"
 
     def test_make_extension_request_no_params(self):
@@ -198,3 +197,57 @@ class TestIterS2CPackets:
 
     def test_empty_stream(self):
         assert list(iter_s2c_packets(b"")) == []
+
+
+class TestS2CArrayRoot:
+    def test_sfs_array_root(self):
+        """S2C packet with SFS_ARRAY as root element (not SFS_OBJECT)."""
+        from sfs2x.objects import SFS_ARRAY
+        # Build a raw SFS_ARRAY payload: [type=17][count=2][BYTE 1][UTF_STRING "hi"]
+        payload = bytearray()
+        payload.append(SFS_ARRAY)
+        payload.extend(struct.pack(">H", 2))
+        # BYTE 1
+        payload.append(0x02)
+        payload.append(1)
+        # UTF_STRING "hi"
+        payload.append(0x08)
+        payload.extend(struct.pack(">H", 2))
+        payload.extend(b"hi")
+        # Wrap in S2C header
+        packet = bytearray()
+        packet.append(S2C_HEADER)
+        packet.extend(struct.pack(">H", len(payload)))
+        packet.extend(payload)
+        decoded, consumed = decode_s2c_packet(bytes(packet))
+        assert consumed == len(packet)
+        assert "_array" in decoded
+        assert decoded["_array"] == [1, "hi"]
+
+
+class TestC2SFullRoundtrip:
+    def test_encode_decode_reencode_bytes_match(self):
+        """C2S encode → decode_typed → re-encode produces identical bytes."""
+        from sfs2x.objects import LONG
+        params = {
+            "cmd": "test.command",
+            "x": TypedValue(INT, 42),
+            "y": TypedValue(BYTE, 1),
+            "z": TypedValue(LONG, 9999999999),
+        }
+        original = encode_c2s_packet(CTRL_EXTENSION, ACTION_EXTENSION, params, server_id=500)
+        decoded, _ = decode_c2s_packet_typed(original)
+        # Re-encode from typed decode
+        re_encoded = encode_c2s_packet(
+            decoded["c"].value, decoded["a"].value, decoded["p"],
+            server_id=500,
+        )
+        assert re_encoded == original
+
+
+class TestServerIdMax:
+    def test_server_id_max_value(self):
+        """server_id=65535 (max uint16) encodes and decodes correctly."""
+        packet = encode_c2s_packet(CTRL_SYSTEM, ACTION_KEEPALIVE, {}, server_id=65535)
+        sid = struct.unpack_from(">H", packet, 1)[0]
+        assert sid == 65535

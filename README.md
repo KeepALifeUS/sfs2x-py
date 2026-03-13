@@ -7,6 +7,12 @@
 
 Pure Python implementation of the SmartFoxServer 2X binary protocol.
 
+## What is SmartFoxServer 2X?
+
+[SmartFoxServer 2X](https://www.smartfoxserver.com/) (SFS2X) is a real-time multiplayer game server used by many mobile and web games. It communicates over TCP using a custom binary protocol with its own type system (SFSObject/SFSArray), XOR obfuscation on client-to-server packets, optional zlib/zstd compression, and AES session encryption.
+
+This library provides a complete encode/decode implementation of the SFS2X wire protocol in pure Python — useful for protocol analysis, reverse engineering, MITM proxying, and building game bots.
+
 ## Features
 
 - **Full type system**: All 19 SFS2X data types (NULL, BOOL, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, UTF_STRING, arrays, SFS_ARRAY, SFS_OBJECT)

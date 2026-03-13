@@ -1,6 +1,6 @@
 [project]
 name = "sfs2x-py"
-version = "0.1.0"
+version = "0.1.1"
 description = "SmartFoxServer 2X binary protocol implementation for Python"
 readme = "README.md"
 license = "MIT"
@@ -11,7 +11,18 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Topic :: Software Development :: Libraries",
     "Topic :: Games/Entertainment",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
 ]
+
+[project.urls]
+Repository = "https://github.com/KeepALifeUS/sfs2x-py"
+Issues = "https://github.com/KeepALifeUS/sfs2x-py/issues"
+Changelog = "https://github.com/KeepALifeUS/sfs2x-py/blob/main/CHANGELOG.md"
 dependencies = [
     "pycryptodome>=3.19",
     "aiohttp>=3.9",
@@ -27,3 +38,7 @@ packages = ["src/sfs2x"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

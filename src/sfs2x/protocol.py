@@ -25,9 +25,10 @@ from __future__ import annotations
 
 import struct
 import zlib
-from typing import Any
+from collections.abc import Iterator
+from typing import Any, TypeAlias
 
-from .objects import SFSCodec, TypedValue, BYTE, SHORT, INT, SFS_OBJECT, SFS_ARRAY
+from .objects import SFSCodec, TypedValue, INT, SFS_OBJECT, SFS_ARRAY
 
 __all__ = [
     "encode_c2s_packet", "decode_c2s_packet", "decode_c2s_packet_typed",
@@ -44,7 +45,7 @@ __all__ = [
 ]
 
 # Type alias for decoded SFS packets
-SFSPacket = dict[str, Any]
+SFSPacket: TypeAlias = dict[str, Any]
 
 # Header flags
 FLAG_BINARY = 0x80
@@ -240,7 +241,7 @@ def decode_c2s_packet(data: bytes, offset: int = 0) -> tuple[dict[str, Any], int
         raise ValueError(f"Expected C2S header 0xC4/0xE4, got 0x{header:02X}")
 
     compressed = bool(header & FLAG_COMPRESSED)
-    server_id = struct.unpack_from(">H", data, offset + 1)[0]
+    _server_id = struct.unpack_from(">H", data, offset + 1)[0]  # noqa: F841
     size = struct.unpack_from(">H", data, offset + 3)[0]
     total = 5 + size
 
@@ -263,7 +264,7 @@ def decode_c2s_packet_typed(data: bytes, offset: int = 0) -> tuple[dict[str, Any
     if header not in (C2S_HEADER, C2S_HEADER_COMPRESSED):
         raise ValueError(f"Expected C2S header 0xC4/0xE4, got 0x{header:02X}")
     compressed = bool(header & FLAG_COMPRESSED)
-    server_id = struct.unpack_from(">H", data, offset + 1)[0]
+    _server_id = struct.unpack_from(">H", data, offset + 1)[0]  # noqa: F841
     size = struct.unpack_from(">H", data, offset + 3)[0]
     total = 5 + size
     if offset + total > len(data):
@@ -351,7 +352,7 @@ def parse_s2c_command(sfs_obj: dict) -> tuple[str | None, dict]:
     return None, p
 
 
-def iter_s2c_packets(data: bytes):
+def iter_s2c_packets(data: bytes) -> Iterator[tuple[dict[str, Any], int]]:
     """Iterate over S2C packets in a byte stream, yielding (decoded_dict, offset).
 
     Skips non-0x80 header bytes (noise between packets).

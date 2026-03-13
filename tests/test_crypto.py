@@ -172,3 +172,28 @@ class TestPasswordHash:
         import hashlib
         expected = hashlib.md5(b"session").hexdigest()
         assert make_password_hash("session", "") == expected
+
+    def test_unicode_password(self):
+        import hashlib
+        expected = hashlib.md5("tokenпароль".encode("utf-8")).hexdigest()
+        assert make_password_hash("token", "пароль") == expected
+
+    def test_special_characters(self):
+        import hashlib
+        expected = hashlib.md5("tok<>&\"'!@#$%pass".encode("utf-8")).hexdigest()
+        assert make_password_hash("tok<>&\"'!@#$%", "pass") == expected
+
+
+class TestAESDecryptCorrupted:
+    def test_corrupted_ciphertext(self):
+        """Decrypting corrupted ciphertext should raise an error."""
+        key = os.urandom(16)
+        iv = os.urandom(16)
+        cipher = AESCipher(key, iv)
+        # Encrypt something valid, then corrupt
+        encrypted = cipher.encrypt(b"valid data here!")
+        corrupted = bytearray(encrypted)
+        corrupted[0] ^= 0xFF
+        corrupted[-1] ^= 0xFF
+        with pytest.raises(Exception):  # ValueError from bad padding
+            cipher.decrypt(bytes(corrupted))

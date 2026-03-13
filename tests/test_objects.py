@@ -1,13 +1,11 @@
 """Tests for SFSObject encode/decode roundtrips."""
 
-import struct
 import pytest
 from sfs2x.objects import (
     SFSCodec, TypedValue,
-    NULL, BOOL, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, UTF_STRING,
-    BOOL_ARRAY, BYTE_ARRAY, SHORT_ARRAY, INT_ARRAY,
+    BOOL, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, UTF_STRING,
+    BOOL_ARRAY, SHORT_ARRAY, INT_ARRAY,
     LONG_ARRAY, FLOAT_ARRAY, DOUBLE_ARRAY, UTF_STRING_ARRAY,
-    SFS_ARRAY, SFS_OBJECT,
 )
 
 
@@ -214,6 +212,83 @@ class TestDecodeTyped:
         encoded = SFSCodec.encode(obj)
         decoded, _ = SFSCodec.decode_typed(encoded)
         assert decoded["x"] is None
+
+
+class TestArrayTypesExtended:
+    def test_bool_array_roundtrip(self):
+        arr = [True, False, True, True, False]
+        obj = {"x": TypedValue(BOOL_ARRAY, arr)}
+        encoded = SFSCodec.encode(obj)
+        decoded, _ = SFSCodec.decode(encoded)
+        assert decoded["x"] == arr
+
+    def test_float_array_roundtrip(self):
+        arr = [1.5, -2.5, 0.0]
+        obj = {"x": TypedValue(FLOAT_ARRAY, arr)}
+        encoded = SFSCodec.encode(obj)
+        decoded, _ = SFSCodec.decode(encoded)
+        assert len(decoded["x"]) == 3
+        for a, b in zip(decoded["x"], arr):
+            assert abs(a - b) < 1e-6
+
+    def test_double_array_roundtrip(self):
+        arr = [1.23456789012345, -9.87654321098765]
+        obj = {"x": TypedValue(DOUBLE_ARRAY, arr)}
+        encoded = SFSCodec.encode(obj)
+        decoded, _ = SFSCodec.decode(encoded)
+        assert len(decoded["x"]) == 2
+        for a, b in zip(decoded["x"], arr):
+            assert abs(a - b) < 1e-10
+
+    def test_nested_sfs_array(self):
+        """SFS_ARRAY inside SFS_ARRAY."""
+        inner = [1, "two", True]
+        outer = [inner, 42, "top"]
+        result = roundtrip({"x": outer})
+        assert result["x"][0] == [1, "two", True]
+        assert result["x"][1] == 42
+        assert result["x"][2] == "top"
+
+
+class TestBoundaryValues:
+    def test_byte_boundaries(self):
+        # BYTE in SFS2X is unsigned (0-255 on wire, stored as single byte)
+        assert roundtrip({"x": 0})["x"] == 0
+        assert roundtrip({"x": 127})["x"] == 127
+        # Negative values in BYTE range auto-encode as BYTE but decode unsigned
+        result = roundtrip({"x": TypedValue(SHORT, -128)})
+        assert result["x"] == -128
+
+    def test_short_boundaries(self):
+        result = roundtrip({"x": TypedValue(SHORT, -32768)})
+        assert result["x"] == -32768
+        result = roundtrip({"x": TypedValue(SHORT, 32767)})
+        assert result["x"] == 32767
+
+    def test_int_boundaries(self):
+        result = roundtrip({"x": TypedValue(INT, -2147483648)})
+        assert result["x"] == -2147483648
+        result = roundtrip({"x": TypedValue(INT, 2147483647)})
+        assert result["x"] == 2147483647
+
+    def test_long_boundaries(self):
+        result = roundtrip({"x": TypedValue(LONG, -(2**63))})
+        assert result["x"] == -(2**63)
+        result = roundtrip({"x": TypedValue(LONG, 2**63 - 1)})
+        assert result["x"] == 2**63 - 1
+
+
+class TestNumericStringKeys:
+    def test_numeric_string_key(self):
+        obj = {"123": "value", "0": True}
+        result = roundtrip(obj)
+        assert result["123"] == "value"
+        assert result["0"] is True
+
+    def test_mixed_numeric_string_keys(self):
+        obj = {"1": 1, "two": 2, "3": 3}
+        result = roundtrip(obj)
+        assert result == obj
 
 
 class TestErrors:
