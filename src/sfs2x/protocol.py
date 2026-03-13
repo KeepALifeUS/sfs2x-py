@@ -35,6 +35,7 @@ __all__ = [
     "make_extension_request", "make_keepalive", "parse_s2c_command",
     "iter_s2c_packets",
     "obfuscate_c2s", "deobfuscate_c2s",
+    "SFSPacket",
     "FLAG_BINARY", "FLAG_ENCRYPTED", "FLAG_COMPRESSED", "FLAG_BIG_SIZED",
     "C2S_HEADER", "C2S_HEADER_COMPRESSED", "S2C_HEADER",
     "CTRL_SYSTEM", "CTRL_EXTENSION",

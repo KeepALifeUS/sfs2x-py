@@ -15,6 +15,12 @@ from .protocol import (
     make_extension_request, make_keepalive, parse_s2c_command,
     iter_s2c_packets,
     obfuscate_c2s, deobfuscate_c2s,
+    SFSPacket,
+    FLAG_BINARY, FLAG_ENCRYPTED, FLAG_COMPRESSED, FLAG_BIG_SIZED,
+    C2S_HEADER, C2S_HEADER_COMPRESSED, S2C_HEADER,
+    CTRL_SYSTEM, CTRL_EXTENSION,
+    ACTION_HANDSHAKE, ACTION_LOGIN, ACTION_LOGOUT,
+    ACTION_KEEPALIVE, ACTION_EXTENSION,
 )
 from .crypto import AESCipher, KeyExchange, make_password_hash
 
@@ -30,6 +36,12 @@ __all__ = [
     "encode_s2c_packet", "decode_s2c_packet",
     "make_extension_request", "make_keepalive", "parse_s2c_command",
     "iter_s2c_packets", "obfuscate_c2s", "deobfuscate_c2s",
+    "SFSPacket",
+    "FLAG_BINARY", "FLAG_ENCRYPTED", "FLAG_COMPRESSED", "FLAG_BIG_SIZED",
+    "C2S_HEADER", "C2S_HEADER_COMPRESSED", "S2C_HEADER",
+    "CTRL_SYSTEM", "CTRL_EXTENSION",
+    "ACTION_HANDSHAKE", "ACTION_LOGIN", "ACTION_LOGOUT",
+    "ACTION_KEEPALIVE", "ACTION_EXTENSION",
     # crypto
     "AESCipher", "KeyExchange", "make_password_hash",
 ]
