@@ -18,16 +18,16 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "License :: OSI Approved :: MIT License",
 ]
-
-[project.urls]
-Repository = "https://github.com/KeepALifeUS/sfs2x-py"
-Issues = "https://github.com/KeepALifeUS/sfs2x-py/issues"
-Changelog = "https://github.com/KeepALifeUS/sfs2x-py/blob/main/CHANGELOG.md"
 dependencies = [
     "pycryptodome>=3.19",
     "aiohttp>=3.9",
     "zstandard>=0.22",
 ]
+
+[project.urls]
+Repository = "https://github.com/KeepALifeUS/sfs2x-py"
+Issues = "https://github.com/KeepALifeUS/sfs2x-py/issues"
+Changelog = "https://github.com/KeepALifeUS/sfs2x-py/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-asyncio"]
