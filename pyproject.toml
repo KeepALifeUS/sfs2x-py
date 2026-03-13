@@ -1,0 +1,29 @@
+[project]
+name = "sfs2x-py"
+version = "0.1.0"
+description = "SmartFoxServer 2X binary protocol implementation for Python"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{name = "Vlad"}]
+keywords = ["smartfoxserver", "sfs2x", "game", "protocol", "reverse-engineering"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Games/Entertainment",
+]
+dependencies = [
+    "pycryptodome>=3.19",
+    "aiohttp>=3.9",
+    "zstandard>=0.22",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sfs2x"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
