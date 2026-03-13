@@ -1,9 +1,9 @@
 # sfs2x-py
 
 [![CI](https://github.com/KeepALifeUS/sfs2x-py/actions/workflows/ci.yml/badge.svg)](https://github.com/KeepALifeUS/sfs2x-py/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/sfs2x-py)](https://pypi.org/project/sfs2x-py/)
-[![Python](https://img.shields.io/pypi/pyversions/sfs2x-py)](https://pypi.org/project/sfs2x-py/)
-[![Downloads](https://img.shields.io/pypi/dm/sfs2x-py)](https://pypi.org/project/sfs2x-py/)
+[![PyPI](https://img.shields.io/pypi/v/sfs2x-py.svg)](https://pypi.org/project/sfs2x-py/)
+[![Python](https://img.shields.io/pypi/pyversions/sfs2x-py.svg)](https://pypi.org/project/sfs2x-py/)
+[![Downloads](https://img.shields.io/pypi/dm/sfs2x-py.svg)](https://pypi.org/project/sfs2x-py/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **Pure Python implementation of the SmartFoxServer 2X binary protocol.**
